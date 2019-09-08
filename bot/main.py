@@ -26,5 +26,5 @@ while True:
                             if str(response_2[1]) == str(arr1[0]):
                                 vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
                 if str(response_2[0]) == "помощь":
-                    mess = "расписание, [номер группы] [день недели]"+ "\n" + "Примеры команд: зрс1701 вт"
+                    mess = "Расписание, [номер группы] [день недели]" + "\n" + "Примеры команд: \nзрс1701 вт \nбрв1701 пт \nбст1901 ср" + "\n\n" + "Обратная связь" + "\n" + "Чтобы обратиться к администраторам сервиса с предложением для улучшения сервиса, коррекцией расписания или другим вопросам напишите нам на почту yetanothercompany2019@gmail.com"
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
