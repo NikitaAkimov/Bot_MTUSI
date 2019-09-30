@@ -23,8 +23,14 @@ while True:
                 for arr in raspisanie:
                     if str(response_2[0]) == arr:
                         for arr1 in raspisanie[arr].items():
+                            persent = ""
+                            response_2.append(persent)
                             if str(response_2[1]) == str(arr1[0]):
                                 vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
+                            elif str(response_2[1]) == "":
+                                mess = "Введите корректную команду. \nЧтобы узнать список команды напишите мне Помощь."
+                                vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                                break
                 if str(response_2[0]) == "помощь":
                     mess = "Расписание, [номер группы] [день недели]" + "\n" + "Примеры команд: \nзрс1701 вт \nбрв1701 пт \nбст1901 ср" + "\n\n" + "Обратная связь" + "\n" + "Чтобы обратиться к администраторам сервиса с предложением для улучшения сервиса, коррекцией расписания или другим вопросам напишите нам на почту yetanothercompany2019@gmail.com"
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
