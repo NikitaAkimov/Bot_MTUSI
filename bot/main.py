@@ -25,7 +25,6 @@ while True:
                         for arr1 in raspisanie[arr].items():
                             persent = ""
                             response_2.append(persent)
-                            #print(response_2)
                             if str(response_2[1]) == str(arr1[0]):
                                 vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
                             elif str(response_2[1]) == "":
