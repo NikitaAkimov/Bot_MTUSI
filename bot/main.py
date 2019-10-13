@@ -70,14 +70,20 @@ while True:
                                     if str(response_2[0]) == str(arr1[0]):
                                         vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
                 # === Регистрация пользователя ===
-                if str(response_2[0]) == "регистрция":
+                if str(response_2[0]) == "регистрация":
+                    persent = ""
+                    response_2.append(persent)
                     data_user = load_dict_from_file()
                     user_id = str(event.user_id)
-                    new_user = {user_id : response_2[1]}
-                    data_user.update(new_user)
-                    save_dict_to_file(data_user)
-                    mess = "Вы зарегестрированы"
-                    vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                    if str(response_2[1]) != "":
+                        new_user = {user_id : response_2[1]}
+                        data_user.update(new_user)
+                        save_dict_to_file(data_user)
+                        mess = "Вы зарегестрированы"
+                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                    if str(response_2[1]) == "":
+                        mess = "Введите корректную команду. \nЧтобы узнать список команды напишите мне Помощь."
+                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
                 # === Отправка сообщения администратору ===
                 if str(response_2[0]) == "админу":
                     mess = "Ваше сообщение отправлено."
@@ -86,7 +92,7 @@ while True:
                     vk_session.method('messages.send', {'user_id': 202477769, 'message': mess_admin, 'random_id': 0})
                 # === Инстукция по использованию бота ===
                 if str(response_2[0]) == "помощь":
-                    mess = "Регистрация пользователя \nРегистрация, регистрция [номер группы] \nПримеры команд: \nрегистрация зрс1701 \nрегистрация брв1701 \nрегистрация бст1901" + "\n\n" + "Расписание, [день недели]" + "\n" + "Примеры команд: \nвт \nпт \nср" + "\n\n" + "Клавиатура с днями недели \nЧтобы воспользоваться быстрым вводом с клавиатуры напишите боту сообщение Клавиатура \nПримеры команд: \nклавиатура" + "\n\n" + "Обратная связь" + "\n" + "Чтобы обратиться к администраторам сервиса с предложением для улучшения сервиса, коррекцией расписания или другим вопросам отправьте команду \nадмину [ваше сообщение] \n или напишите нам на почту yetanothercompany2019@gmail.com"
+                    mess = "Регистрация пользователя \nРегистрация, регистрация [номер группы] \nПримеры команд: \nрегистрация зрс1701 \nрегистрация брв1701 \nрегистрация бст1901" + "\n\n" + "Расписание, [день недели]" + "\n" + "Примеры команд: \nвт \nпт \nср" + "\n\n" + "Клавиатура с днями недели \nЧтобы воспользоваться быстрым вводом с клавиатуры напишите боту сообщение Клавиатура \nПримеры команд: \nклавиатура" + "\n\n" + "Обратная связь" + "\n" + "Чтобы обратиться к администраторам сервиса с предложением для улучшения сервиса, коррекцией расписания или другим вопросам отправьте команду \nадмину [ваше сообщение] \n или напишите нам на почту yetanothercompany2019@gmail.com"
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
                 # === открыть клавиатуру ===
                 if str(response_2[0]) == "клавиатура":
