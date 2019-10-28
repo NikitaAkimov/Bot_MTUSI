@@ -121,7 +121,7 @@ while True:
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
                 # === открыть клавиатуру ===
                 if str(response_2[0]) == "клавиатура":
-                    mess = "Нажми на кнопку, чтобы получить рсписание на нужный день"
+                    mess = "Нажми на кнопку, чтобы получить расписание на нужный день"
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
                 # === закрыть клвиатуру ===
                 if str(response_2[0]) == 'закрыть':
