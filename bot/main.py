@@ -3,8 +3,8 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 import vk_api
 import datetime
 from data import raspisanie
+from token_secure import token
 
-token = "25a99390fbbb59c3b9c4ad2bb0094a2cf7b3e36857687b9f8d418ea7646f0526b9d9b5c9c392b99e7dfed"
 vk_session = vk_api.VkApi(token=token)
 
 session_api = vk_session.get_api()
@@ -121,7 +121,7 @@ while True:
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
                 # === открыть клавиатуру ===
                 if str(response_2[0]) == "клавиатура":
-                    mess = "Нажми на кнопку, чтобы получить расписание на нужный день"
+                    mess = "Нажми на кнопку, чтобы получить рсписание на нужный день"
                     vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
                 # === закрыть клвиатуру ===
                 if str(response_2[0]) == 'закрыть':
