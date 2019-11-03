@@ -61,69 +61,72 @@ day_week = {
 }
 
 while True:
-    for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW:
-            #print('Сообщение пришло в: ' + str(datetime.strftime(datetime.now(), "%H:%M:%S")))
-            #print('Текст сообщения: ' + str(event.text))
-            #print(event.user_id)
-            response = event.text.lower()
-            response_2 = response.split()
-            keyboard = create_keyboard(response_2[0])
-            if event.from_user and not (event.from_me):
-                # === Отправка пользователю расписания на нужный день недели ===
-                data_user = load_dict_from_file()
-                for arr_user in data_user:
-                    if str(event.user_id) == arr_user:
-                        user_group = data_user[str(event.user_id)]
-                        for arr in raspisanie:
-                            if str(user_group) == arr:
-                                for arr1 in raspisanie[arr].items():
-                                    if str(response_2[0]) == str(arr1[0]):
-                                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
-                # === Отправка пользователю расписания по нужной дате ===
-                if response_2[0] == "р":
+    try:
+        for event in longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW:
+                #print('Сообщение пришло в: ' + str(datetime.strftime(datetime.now(), "%H:%M:%S")))
+                #print('Текст сообщения: ' + str(event.text))
+                #print(event.user_id)
+                response = event.text.lower()
+                response_2 = response.split()
+                keyboard = create_keyboard(response_2[0])
+                if event.from_user and not (event.from_me):
+                    # === Отправка пользователю расписания на нужный день недели ===
                     data_user = load_dict_from_file()
-                    year = int(datetime.date.today().year)
-                    day = datetime.datetime(year, int(response_2[2]), int(response_2[1])).weekday()
-                    raspisanie_pers = day_week[int(day)]
                     for arr_user in data_user:
                         if str(event.user_id) == arr_user:
                             user_group = data_user[str(event.user_id)]
                             for arr in raspisanie:
                                 if str(user_group) == arr:
                                     for arr1 in raspisanie[arr].items():
-                                        if str(raspisanie_pers) == str(arr1[0]):
+                                        if str(response_2[0]) == str(arr1[0]):
                                             vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
-                # === Регистрация пользователя ===
-                if str(response_2[0]) == "регистрация":
-                    persent = ""
-                    response_2.append(persent)
-                    data_user = load_dict_from_file()
-                    user_id = str(event.user_id)
-                    if str(response_2[1]) != "":
-                        new_user = {user_id : response_2[1]}
-                        data_user.update(new_user)
-                        save_dict_to_file(data_user)
-                        mess = "Вы зарегестрированы"
+                    # === Отправка пользователю расписания по нужной дате ===
+                    if response_2[0] == "р":
+                        data_user = load_dict_from_file()
+                        year = int(datetime.date.today().year)
+                        day = datetime.datetime(year, int(response_2[2]), int(response_2[1])).weekday()
+                        raspisanie_pers = day_week[int(day)]
+                        for arr_user in data_user:
+                            if str(event.user_id) == arr_user:
+                                user_group = data_user[str(event.user_id)]
+                                for arr in raspisanie:
+                                    if str(user_group) == arr:
+                                        for arr1 in raspisanie[arr].items():
+                                            if str(raspisanie_pers) == str(arr1[0]):
+                                                vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
+                    # === Регистрация пользователя ===
+                    if str(response_2[0]) == "регистрация":
+                        persent = ""
+                        response_2.append(persent)
+                        data_user = load_dict_from_file()
+                        user_id = str(event.user_id)
+                        if str(response_2[1]) != "":
+                            new_user = {user_id : response_2[1]}
+                            data_user.update(new_user)
+                            save_dict_to_file(data_user)
+                            mess = "Вы зарегестрированы"
+                            vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                        elif str(response_2[1]) == "":
+                            mess = "Введите корректную команду. \nЧтобы узнать список команды напишите мне Помощь."
+                            vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                    # === Отправка сообщения администратору ===
+                    if str(response_2[0]) == "админу":
+                        mess = "Ваше сообщение отправлено."
+                        mess_admin = "Вам написал пользователь @id" + str(event.user_id) + " " +" ".join(str(x) for x in response_2[1:])
                         vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
-                    elif str(response_2[1]) == "":
-                        mess = "Введите корректную команду. \nЧтобы узнать список команды напишите мне Помощь."
+                        vk_session.method('messages.send', {'user_id': 202477769, 'message': mess_admin, 'random_id': 0})
+                    # === Инстукция по использованию бота ===
+                    if str(response_2[0]) == "помощь":
+                        mess = "🔷Регистрация пользователя \n🔶Регистрация, регистрация [номер группы] \nПримеры команд: \nрегистрация зрс1701 \nрегистрация брв1701 \nрегистрация бст1901" + "\n\n" + "🔷Расписание пар \n🔶[день недели] - расписание на выбранный день недели" + "\n" + "Примеры команд: \nвт \nпт \nср" + "\n\n" + "🔶р [день] [месяц] - расписание на выбранную дату" + "\n" + "Примеры команд: \nр 1 9 \nр 20 9 \nр 16 10 \nр 4 11" + "\n\n" + "🔷Клавиатура с днями недели \n🔶Клавиатура - воспользоваться быстрым вводом с клавиатуры \nПримеры команд: \nклавиатура" + "\n\n" + "🔷Обратная связь" + "\n" + "🔶админу [ваше сообщение]" + "\n" + "Примеры команд: \nадмину ваш сервис класс!!! \nадмину добавьте расписание для моей группы." + "\n\n" + "Так же можете написать нам на почту yetanothercompany2019@gmail.com"
                         vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
-                # === Отправка сообщения администратору ===
-                if str(response_2[0]) == "админу":
-                    mess = "Ваше сообщение отправлено."
-                    mess_admin = "Вам написал пользователь @id" + str(event.user_id) + " " +" ".join(str(x) for x in response_2[1:])
-                    vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
-                    vk_session.method('messages.send', {'user_id': 202477769, 'message': mess_admin, 'random_id': 0})
-                # === Инстукция по использованию бота ===
-                if str(response_2[0]) == "помощь":
-                    mess = "🔷Регистрация пользователя \n🔶Регистрация, регистрация [номер группы] \nПримеры команд: \nрегистрация зрс1701 \nрегистрация брв1701 \nрегистрация бст1901" + "\n\n" + "🔷Расписание пар \n🔶[день недели] - расписание на выбранный день недели" + "\n" + "Примеры команд: \nвт \nпт \nср" + "\n\n" + "🔶р [день] [месяц] - расписание на выбранную дату" + "\n" + "Примеры команд: \nр 1 9 \nр 20 9 \nр 16 10 \nр 4 11" + "\n\n" + "🔷Клавиатура с днями недели \n🔶Клавиатура - воспользоваться быстрым вводом с клавиатуры \nПримеры команд: \nклавиатура" + "\n\n" + "🔷Обратная связь" + "\n" + "🔶админу [ваше сообщение]" + "\n" + "Примеры команд: \nадмину ваш сервис класс!!! \nадмину добавьте расписание для моей группы." + "\n\n" + "Так же можете написать нам на почту yetanothercompany2019@gmail.com"
-                    vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
-                # === открыть клавиатуру ===
-                if str(response_2[0]) == "клавиатура":
-                    mess = "Нажми на кнопку, чтобы получить рсписание на нужный день"
-                    vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
-                # === закрыть клвиатуру ===
-                if str(response_2[0]) == 'закрыть':
-                    mess = "закрыть"
-                    vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
+                    # === открыть клавиатуру ===
+                    if str(response_2[0]) == "клавиатура":
+                        mess = "Нажми на кнопку, чтобы получить рсписание на нужный день"
+                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
+                    # === закрыть клвиатуру ===
+                    if str(response_2[0]) == 'закрыть':
+                        mess = "закрыть"
+                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0, 'keyboard': keyboard})
+    except:
+        print("Старая ошибка!!!")
