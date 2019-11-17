@@ -72,13 +72,19 @@ while True:
                 keyboard = create_keyboard(response_2[0])
                 if event.from_user and not (event.from_me):
                     # === Отправка пользователю расписания на нужный день недели ===
-                    data_user = load_dict_from_file()
+                    num_week = datetime.date.today().isocalendar()[1] #номер недели
+                    #условие определяющее верхнюю и нижнюю неделю
+                    if num_week%2 == 0:
+                        week = 1 #нижняя неделя
+                    else:
+                        week = 2 #верхняя неделя
+                    data_user = load_dict_from_file() #база данных (пользователь : группа)
                     for arr_user in data_user:
                         if str(event.user_id) == arr_user:
                             user_group = data_user[str(event.user_id)]
                             for arr in raspisanie:
                                 if str(user_group) == arr:
-                                    for arr1 in raspisanie[arr].items():
+                                    for arr1 in raspisanie[arr][week].items():
                                         if str(response_2[0]) == str(arr1[0]):
                                             vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
                     # === Отправка пользователю расписания по нужной дате ===
@@ -87,12 +93,18 @@ while True:
                         year = int(datetime.date.today().year)
                         day = datetime.datetime(year, int(response_2[2]), int(response_2[1])).weekday()
                         raspisanie_pers = day_week[int(day)]
+                        num_week = datetime.date(year, int(response_2[2]), int(response_2[1])).isocalendar()[1] #номер недели
+                        #условие определяющее верхнюю и нижнюю неделю
+                        if num_week%2 == 0:
+                            week = 1 #нижняя неделя
+                        else:
+                            week = 2 #верхняя неделя
                         for arr_user in data_user:
                             if str(event.user_id) == arr_user:
                                 user_group = data_user[str(event.user_id)]
                                 for arr in raspisanie:
                                     if str(user_group) == arr:
-                                        for arr1 in raspisanie[arr].items():
+                                        for arr1 in raspisanie[arr][week].items():
                                             if str(raspisanie_pers) == str(arr1[0]):
                                                 vk_session.method('messages.send', {'user_id': event.user_id, 'message': str(arr1[1]), 'random_id': 0})
                     # === Регистрация пользователя ===
@@ -114,6 +126,12 @@ while True:
                     if str(response_2[0]) == "админу":
                         mess = "Ваше сообщение отправлено."
                         mess_admin = "Вам написал пользователь @id" + str(event.user_id) + " " +" ".join(str(x) for x in response_2[1:])
+                        vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
+                        vk_session.method('messages.send', {'user_id': 202477769, 'message': mess_admin, 'random_id': 0})
+                    # === Реферальная программа ===
+                    if str(response_2[0]) == "реф" and str(response_2[1]) == "прог":
+                        mess = "Ваша заявка отправлена и находится в обработке."
+                        mess_admin = "Пользователь @id" + str(event.user_id) + " пригласил своего друга " +" ".join(str(x) for x in response_2[2:])
                         vk_session.method('messages.send', {'user_id': event.user_id, 'message': mess, 'random_id': 0})
                         vk_session.method('messages.send', {'user_id': 202477769, 'message': mess_admin, 'random_id': 0})
                     # === Инстукция по использованию бота ===
